@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIT-9 :: Beat Sampler</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=4">
+</head>
+
+<body>
+<div class="unit">
+  <div class="screw tl"></div><div class="screw tr"></div><div class="screw bl"></div><div class="screw br"></div>
+  <div class="hdr">
+    <h1>UNIT<span>-9</span> SAMPLER</h1>
+    <div class="sub" id="pageLabel">1/2 · instrument</div>
+  </div>
+
+  <div class="pageport" id="pageport">
+    <div class="pagenav left" id="navLeft">‹</div>
+    <div class="pagenav right" id="navRight">›</div>
+    <div class="pages" id="pages">
+
+      <div class="page page1">
+        <div class="recrow">
+          <div class="recbtn" id="recBtn" title="Record what you play"></div>
+          <div class="durtoggle">
+            <div class="durbtn active" data-dur="30">30s</div>
+            <div class="durbtn" data-dur="60">60s</div>
+          </div>
+          <div class="rectimer" id="recTimer">REC IDLE</div>
+        </div>
+        <div class="armhint" id="armHint">&nbsp;</div>
+        <div class="presetTray" id="presetTray"></div>
+
+        <div class="padrow">
+          <div class="knob-wrap side">
+            <div class="knob knob-lg" id="knobPitch" data-band="pitch"></div>
+            <div class="knob-lbl">Pitch</div>
+            <div class="knob-val" id="valPitch">0 st</div>
+          </div>
+
+          <div class="pads" id="pads"></div>
+
+          <div class="knob-wrap side">
+            <div class="knob knob-lg" id="knobDist" data-band="dist"></div>
+            <div class="knob-lbl">Dist</div>
+            <div class="knob-val" id="valDist">0%</div>
+            <div class="knob" id="knobMix" data-band="mix" style="margin-top:6px;"></div>
+            <div class="knob-lbl">Mix</div>
+            <div class="knob-val" id="valMix">100%</div>
+          </div>
+        </div>
+
+        <div class="eqrow">
+          <div class="knob-wrap">
+            <div class="knob" id="knobLow" data-band="low"></div>
+            <div class="knob-lbl">Low</div>
+            <div class="knob-val" id="valLow">0 dB</div>
+          </div>
+          <div class="knob-wrap">
+            <div class="knob" id="knobMid" data-band="mid"></div>
+            <div class="knob-lbl">Mid</div>
+            <div class="knob-val" id="valMid">0 dB</div>
+          </div>
+          <div class="knob-wrap">
+            <div class="knob" id="knobHigh" data-band="high"></div>
+            <div class="knob-lbl">High</div>
+            <div class="knob-val" id="valHigh">0 dB</div>
+          </div>
+        </div>
+
+        <div class="traow">
+          <div class="fader-wrap">
+            <div class="fader-lbl">Vol</div>
+            <div class="meter-row">
+              <input type="range" class="vfader" id="volFader" min="0" max="100" value="80">
+              <div class="meter"><div class="meter-fill" id="meterFill"></div></div>
+            </div>
+            <div class="fader-val" id="volVal">80</div>
+          </div>
+
+          <div class="transport">
+            <div class="tbtn play" id="btnPlay">▶ PLAY</div>
+            <div class="tbtn stop" id="btnStop">■ STOP</div>
+            <div class="tbtn loop" id="btnLoop">⟲ LOOP</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="page page2">
+        <div class="projrow">
+          <div class="tbtn small" id="btnSaveProj">💾 SAVE PROJECT</div>
+          <div class="tbtn small" id="btnLoadProj">📂 LOAD PROJECT</div>
+          <input type="file" id="projFileInput" accept=".json,application/json" style="display:none;">
+        </div>
+        <div class="projstatus" id="projStatus">&nbsp;</div>
+
+        <div class="tempoModule">
+          <div class="tempoModule-lbl">TEMPO MODULE</div>
+          <input type="range" id="tempoFader" min="60" max="200" value="120">
+          <div class="tempoModule-val"><span id="tempoNum">120</span> <span class="unit">BPM</span></div>
+        </div>
+
+        <div class="midiRow">
+          <div class="tbtn small" id="btnMidiLearn">🎹 MIDI LEARN</div>
+          <div class="tbtn small" id="btnMidiClear">✕ CLEAR MAP</div>
+        </div>
+        <div class="midistatus" id="midiStatus">&nbsp;</div>
+
+        <div class="seq">
+          <div class="seq-hdr">
+            <div class="fader-lbl">Sequencer · 16 steps</div>
+            <div class="fader-lbl" id="stepIndicator">– / 16</div>
+          </div>
+          <div id="seqGrid">Loading sequencer…</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="dots">
+    <div class="dot active" data-page="0"></div>
+    <div class="dot" data-page="1"></div>
+  </div>
+
+  <div class="foot">Swipe or use ‹ › to switch pages &nbsp;·&nbsp; click a pad to play, LOAD (or drag a file) to swap samples &nbsp;·&nbsp; keys 1–9 trigger pads &nbsp;·&nbsp; space = play/stop</div>
+</div>
+
+<!-- Classic scripts (not type="module") on purpose: ES module imports are
+     blocked by CORS when a page is opened directly via file:// with no
+     server, which is exactly how this app gets used (double-click to open,
+     Electron loadFile, Capacitor). Classic scripts have no such restriction,
+     so this still "just works" everywhere while keeping real file separation. -->
+<script src="js/dsp-chain.js?v=4"></script>
+<script src="js/pad-engine.js?v=4"></script>
+<script src="js/sequencer-engine.js?v=4"></script>
+<script src="js/recorder-engine.js?v=4"></script>
+<script src="js/engine.js?v=4"></script>
+<script src="js/knob.js?v=4"></script>
+<script src="js/knobs-panel.js?v=4"></script>
+<script src="js/pads-ui.js?v=4"></script>
+<script src="js/sequencer-ui.js?v=4"></script>
+<script src="js/recorder-ui.js?v=4"></script>
+<script src="js/transport-ui.js?v=4"></script>
+<script src="js/project-storage.js?v=4"></script>
+<script src="js/paging.js?v=4"></script>
+<script src="js/midi-learn.js?v=4"></script>
+<script src="js/boot.js?v=4"></script>
+<script src="js/callback-wiring.js?v=4"></script>
+<script src="js/keyboard-shortcuts.js?v=4"></script>
+<script src="js/main.js?v=4"></script>
+</body>
+</html>
